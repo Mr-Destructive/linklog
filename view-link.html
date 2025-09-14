@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinkLog - Your Personal Link Journal</title>
+    <title>LinkLog - View Link</title>
     <script src="https://unpkg.com/htmx.org@1.9.4"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -21,7 +21,7 @@
             text = text.replace(/`(.*?)`/g, '<code>$1</code>');
             
             // Convert links
-            text = text.replace(/\[([^\\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 dark:text-blue-400 hover:underline" target="_blank">$1</a>');
+            text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 dark:text-blue-400 hover:underline" target="_blank">$1</a>');
             
             // Convert line breaks
             text = text.replace(/\n/g, '<br>');
@@ -46,50 +46,52 @@
             }
         }
         
+        // Get URL parameter
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\[').replace(/[\]]/, '\]');
+            var regex = new RegExp('[\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(window.location.href);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+        
         // Run on page load
         document.addEventListener('DOMContentLoaded', function() {
             initDarkMode();
             
-            // Set up a mutation observer to render markdown when content is loaded
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.type === 'childList') {
-                        mutation.addedNodes.forEach(function(node) {
-                            if (node.nodeType === 1) { // Element node
-                                const markdownElements = node.querySelectorAll ? node.querySelectorAll('.markdown-content') : [];
-                                markdownElements.forEach(function(element) {
-                                    element.innerHTML = renderMarkdown(element.textContent);
-                                });
-                            }
-                        });
-                    }
-                });
-            });
+            // Load link data
+            var linkId = getUrlParameter('id');
+            if (linkId) {
+                // Set up HTMX to load the link data
+                var detailDiv = document.getElementById('link-detail');
+                detailDiv.setAttribute('hx-get', '/.netlify/functions/api?id=' + linkId + '&view=detail');
+                detailDiv.setAttribute('hx-trigger', 'load');
+                // Trigger HTMX manually
+                htmx.process(detailDiv);
+            }
             
-            observer.observe(document.body, { childList: true, subtree: true });
+            // Render markdown content that's already present
+            const markdownElements = document.querySelectorAll('.markdown-content');
+            markdownElements.forEach(function(element) {
+                element.innerHTML = renderMarkdown(element.textContent);
+            });
         });
     </script>
     <style>
-        .link-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .link-card:hover {
-            transform: translateY(-2px);
-        }
         .markdown-content h1 {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             font-weight: bold;
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
         }
         .markdown-content h2 {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: bold;
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
         }
         .markdown-content p {
             margin-bottom: 1rem;
+            line-height: 1.6;
         }
         .markdown-content ul, .markdown-content ol {
             margin-left: 1.5rem;
@@ -139,19 +141,19 @@
                     </svg>
                 </button>
                 
-                <!-- Add new link button -->
-                <button hx-get="/create-link.html" hx-target="#content" hx-swap="innerHTML" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow hover:shadow-md transition-all duration-200 flex items-center">
+                <!-- Back to home button -->
+                <button hx-get="/" hx-target="body" hx-swap="innerHTML" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow hover:shadow-md transition-all duration-200 flex items-center">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                     </svg>
-                    Add Link
+                    Back to Home
                 </button>
             </div>
         </header>
 
         <!-- Main content -->
         <main id="content">
-            <div id="link-list" hx-get="/.netlify/functions/api" hx-trigger="load" hx-target="#link-list" hx-swap="innerHTML">
+            <div id="link-detail">
                 <div class="flex justify-center items-center h-40">
                     <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
                 </div>

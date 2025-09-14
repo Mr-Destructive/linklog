@@ -24,10 +24,11 @@ import (
 )
 
 var (
-	queries      *models.Queries
-	listTemplate *template.Template
-	linkTemplate *template.Template
-	editTemplate *template.Template
+	queries       *models.Queries
+	listTemplate  *template.Template
+	linkTemplate  *template.Template
+	editTemplate  *template.Template
+	detailTemplate *template.Template
 )
 
 // LinkMetadata represents metadata extracted from a webpage
@@ -122,6 +123,7 @@ func handler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse,
 	linkTemplate = template.Must(template.New("link").Parse(embedsql.LinkHTML))
 	listTemplate = template.Must(template.New("list").Parse(embedsql.ListHTML))
 	editTemplate = template.Must(template.New("edit").Parse(embedsql.EditHTML))
+	detailTemplate = template.Must(template.New("detail").Parse(embedsql.DetailHTML))
 	switch req.HTTPMethod {
 	case http.MethodGet:
 		if req.QueryStringParameters["id"] != "" {
@@ -275,9 +277,17 @@ func respond(req events.APIGatewayProxyRequest, data any) (events.APIGatewayProx
 				return events.APIGatewayProxyResponse{StatusCode: 500}, err
 			}
 		case models.Link:
-			err := linkTemplate.Execute(&tpl, v)
-			if err != nil {
-				return events.APIGatewayProxyResponse{StatusCode: 500}, err
+			// Check if this is a request for the detail view
+			if req.QueryStringParameters["view"] == "detail" {
+				err := detailTemplate.Execute(&tpl, v)
+				if err != nil {
+					return events.APIGatewayProxyResponse{StatusCode: 500}, err
+				}
+			} else {
+				err := linkTemplate.Execute(&tpl, v)
+				if err != nil {
+					return events.APIGatewayProxyResponse{StatusCode: 500}, err
+				}
 			}
 		default:
 			return events.APIGatewayProxyResponse{StatusCode: 400}, fmt.Errorf("unsupported data type for HTML fragment generation: %T", data)

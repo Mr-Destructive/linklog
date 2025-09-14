@@ -1,4 +1,4 @@
-<form hx-post="/.netlify/functions/api" hx-target="#content" hx-swap="innerHTML" hx-indicator="#loading" class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:p-8 transition-all duration-300">
+<form hx-post="/.netlify/functions/api" hx-target="#content" hx-swap="innerHTML" hx-indicator="#loading" class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-all duration-200">
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Add New Link</h2>
         <div id="loading" class="htmx-indicator flex items-center text-blue-600 dark:text-blue-400">
@@ -10,7 +10,7 @@
         </div>
     </div>
 
-    <div class="mb-6">
+    <div class="mb-5">
         <label for="url" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">URL</label>
         <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -19,21 +19,21 @@
                     <path fill-rule="evenodd" d="M5.172 12.586a2 2 0 010 2.828l-3 3a2 2 0 01-2.828-2.828l3-3a2 2 0 012.828 0zm6.828-6.828a2 2 0 010-2.828l3-3a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0z" clip-rule="evenodd"></path>
                 </svg>
             </div>
-            <input type="url" id="url" name="url" required class="w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors" placeholder="https://example.com">
+            <input type="url" id="url" name="url" required class="w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors" placeholder="https://example.com">
         </div>
     </div>
 
     <div class="mb-6">
         <label for="commentary" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">Commentary</label>
-        <textarea id="commentary" name="commentary" rows="5" class="w-full px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors" placeholder="Add your thoughts about this link..."></textarea>
+        <textarea id="commentary" name="commentary" rows="4" class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors" placeholder="Add your thoughts about this link..."></textarea>
         <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">You can use Markdown for formatting</p>
     </div>
 
     <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
-        <button hx-get="/" hx-target="#content" hx-swap="innerHTML" class="px-5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium">
+        <button hx-get="/" hx-target="#content" hx-swap="innerHTML" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium">
             Cancel
         </button>
-        <button type="submit" class="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+        <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md shadow hover:shadow-md transition-all duration-200">
             Save Link
         </button>
     </div>
