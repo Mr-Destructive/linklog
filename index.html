@@ -7,8 +7,34 @@
     <script src="https://unpkg.com/htmx.org@1.9.4"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+        // Dark mode functions
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+        }
+        
+        function initDarkMode() {
+            const html = document.documentElement;
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                html.classList.add('dark');
+            } else if (savedTheme === 'light') {
+                html.classList.remove('dark');
+            } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                html.classList.add('dark');
+            }
+        }
+        
         // Simple markdown renderer
         function renderMarkdown(text) {
+            if (!text) return '';
+            
+            // Convert headers
+            text = text.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+            text = text.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            text = text.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+            
             // Convert bold
             text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             text = text.replace(/__(.*?)__/g, '<strong>$1</strong>');
@@ -23,45 +49,49 @@
             // Convert links
             text = text.replace(/\[([^\\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 dark:text-blue-400 hover:underline" target="_blank">$1</a>');
             
-            // Convert line breaks
+            // Convert line breaks to paragraphs
+            text = '<p>' + text.replace(/\n\n/g, '</p><p>') + '</p>';
             text = text.replace(/\n/g, '<br>');
             
             return text;
         }
         
-        // Dark mode toggle functionality
-        function toggleDarkMode() {
-            const html = document.documentElement;
-            html.classList.toggle('dark');
-            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+        // Truncate text function
+        function truncateText(text, maxLength) {
+            if (text.length <= maxLength) return text;
+            return text.substr(0, maxLength) + '...';
         }
         
-        // Initialize dark mode based on system preference or saved preference
-        function initDarkMode() {
-            const html = document.documentElement;
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                html.classList.add('dark');
-            } else {
-                html.classList.remove('dark');
-            }
+        // Render markdown content
+        function renderMarkdownContent() {
+            const markdownElements = document.querySelectorAll('.markdown-content');
+            markdownElements.forEach(function(element) {
+                const originalText = element.textContent || element.innerText;
+                element.innerHTML = renderMarkdown(originalText);
+            });
         }
         
-        // Run on page load
+        // Truncate commentary in list view
+        function truncateCommentary() {
+            const commentaryElements = document.querySelectorAll('.commentary-preview');
+            commentaryElements.forEach(function(element) {
+                const originalText = element.textContent || element.innerText;
+                element.textContent = truncateText(originalText, 100);
+            });
+        }
+        
+        // Initialize on load
         document.addEventListener('DOMContentLoaded', function() {
             initDarkMode();
+            renderMarkdownContent();
+            truncateCommentary();
             
-            // Set up a mutation observer to render markdown when content is loaded
+            // Set up a mutation observer to handle dynamically loaded content
             const observer = new MutationObserver(function(mutations) {
                 mutations.forEach(function(mutation) {
                     if (mutation.type === 'childList') {
-                        mutation.addedNodes.forEach(function(node) {
-                            if (node.nodeType === 1) { // Element node
-                                const markdownElements = node.querySelectorAll ? node.querySelectorAll('.markdown-content') : [];
-                                markdownElements.forEach(function(element) {
-                                    element.innerHTML = renderMarkdown(element.textContent);
-                                });
-                            }
-                        });
+                        renderMarkdownContent();
+                        truncateCommentary();
                     }
                 });
             });
@@ -70,12 +100,6 @@
         });
     </script>
     <style>
-        .link-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .link-card:hover {
-            transform: translateY(-2px);
-        }
         .markdown-content h1 {
             font-size: 1.5rem;
             font-weight: bold;
@@ -88,8 +112,15 @@
             margin-top: 1rem;
             margin-bottom: 0.5rem;
         }
+        .markdown-content h3 {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
         .markdown-content p {
             margin-bottom: 1rem;
+            line-height: 1.5;
         }
         .markdown-content ul, .markdown-content ol {
             margin-left: 1.5rem;
@@ -117,6 +148,12 @@
         .dark .markdown-content code {
             background-color: #334155;
         }
+        .link-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .link-card:hover {
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-200">
@@ -131,10 +168,10 @@
             <div class="flex items-center space-x-4">
                 <!-- Dark mode toggle -->
                 <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" aria-label="Toggle dark mode">
-                    <svg id="sun-icon" class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
                     </svg>
-                    <svg id="moon-icon" class="w-5 h-5 block dark:hidden" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-5 h-5 block dark:hidden" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
                     </svg>
                 </button>

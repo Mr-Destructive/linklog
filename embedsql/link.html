@@ -1,4 +1,4 @@
-<div class="link-item bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-all duration-200 overflow-hidden mb-5" id="link-{{.ID}}">
+<div class="link-item bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-all duration-200 overflow-hidden mb-5 link-card" id="link-{{.ID}}">
     <div class="p-5">
         <div class="flex flex-col md:flex-row">
             {{ if .ImageUrl.Valid }}
@@ -16,10 +16,10 @@
             
             <div class="flex-1 min-w-0">
                 <a href="/view-link.html?id={{.ID}}" class="text-lg font-semibold text-blue-600 dark:text-blue-400 hover:underline block mb-2">{{ if .Title.Valid }}{{.Title.String}}{{ else }}{{.Url}}{{ end }}</a>
-                <div class="text-gray-600 dark:text-gray-300 text-sm markdown-content mb-3">
+                <div class="text-gray-600 dark:text-gray-300 text-sm commentary-preview markdown-content">
                     {{.Commentary}}
                 </div>
-                <div class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                <div class="text-xs text-gray-500 dark:text-gray-400 truncate mt-2">
                     {{.Url}}
                 </div>
             </div>

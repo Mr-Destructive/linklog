@@ -45,3 +45,19 @@
         </div>
     </div>
 </div>
+
+<script>
+// Render markdown for this specific content
+document.addEventListener('htmx:afterSettle', function(evt) {
+    if (evt.target.id === 'link-detail') {
+        const markdownElements = evt.target.querySelectorAll('.markdown-content');
+        markdownElements.forEach(function(element) {
+            const originalText = element.textContent || element.innerText;
+            // Get the renderMarkdown function from the parent window
+            if (typeof window.parent.renderMarkdown === 'function') {
+                element.innerHTML = window.parent.renderMarkdown(originalText);
+            }
+        });
+    }
+});
+</script>
