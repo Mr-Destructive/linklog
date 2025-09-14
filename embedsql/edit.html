@@ -1,0 +1,23 @@
+<form hx-put="/.netlify/functions/api/?id={{.ID}}" hx-target="#link-{{.ID}}" hx-swap="outerHTML" hx-encoding="urlencoded" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-5 mb-6" id="link-{{.ID}}">
+    <input type="hidden" name="id" value="{{.ID}}">
+    
+    <div class="mb-4">
+        <label for="url" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">URL</label>
+        <input type="url" id="url" name="url" value="{{.Url}}" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors">
+    </div>
+
+    <div class="mb-4">
+        <label for="commentary" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">Commentary</label>
+        <textarea id="commentary" name="commentary" rows="4" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors">{{.Commentary}}</textarea>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">You can use Markdown for formatting</p>
+    </div>
+
+    <div class="flex justify-end space-x-3">
+        <button hx-get="/.netlify/functions/api" hx-target="#link-list" hx-swap="innerHTML" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium" type="button">
+            Cancel
+        </button>
+        <button type="submit" class="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+            Save Changes
+        </button>
+    </div>
+</form>
