@@ -15,6 +15,3 @@ var LinkHTML string
 
 //go:embed edit.html
 var EditHTML string
-
-//go:embed detail.html
-var DetailHTML string

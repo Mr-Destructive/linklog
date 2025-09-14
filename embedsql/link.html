@@ -15,8 +15,8 @@
             {{ end }}
             
             <div class="flex-1 min-w-0">
-                <a href="/view-link.html?id={{.ID}}" class="text-lg font-semibold text-blue-600 dark:text-blue-400 hover:underline block mb-2">{{ if .Title.Valid }}{{.Title.String}}{{ else }}{{.Url}}{{ end }}</a>
-                <div class="text-gray-600 dark:text-gray-300 text-sm commentary-preview markdown-content">
+                <a href="{{.Url}}" target="_blank" class="text-lg font-semibold text-blue-600 dark:text-blue-400 hover:underline block mb-2">{{ if .Title.Valid }}{{.Title.String}}{{ else }}{{.Url}}{{ end }}</a>
+                <div class="text-gray-600 dark:text-gray-300 text-sm markdown-content">
                     {{.Commentary}}
                 </div>
                 <div class="text-xs text-gray-500 dark:text-gray-400 truncate mt-2">
@@ -26,9 +26,6 @@
         </div>
         
         <div class="mt-4 flex space-x-2">
-            <a href="/view-link.html?id={{.ID}}" class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium transition-colors">
-                View
-            </a>
             <button hx-put="/.netlify/functions/api?id={{.ID}}" hx-target="#link-{{.ID}}" hx-swap="outerHTML" class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
                 Edit
             </button>
